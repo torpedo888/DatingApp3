@@ -1,5 +1,8 @@
 using API.Data;
+using API.DTOs;
 using API.Entities;
+using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -10,47 +13,30 @@ namespace API.Controllers
     [Authorize]
     public class UsersController : BaseController
     {
-        private readonly DataContext _context;
+        private readonly IUserRepository _userRepository;
+        private readonly IMapper _mapper;
 
-        public UsersController(DataContext context)
+        public UsersController(IUserRepository userRepository, IMapper mapper)
         {
-            _context = context;
+            _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        [AllowAnonymous]
+        //[AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _userRepository.GetMembersAsync();
+
+            return Ok(users);
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        [HttpGet("{username}")]
+        public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
-            return await _context.Users.FindAsync(id);
+            return await _userRepository.GetMemberAsync(username);
         }
 
-        [AllowAnonymous]
-        [HttpGet]
-        [Route("getnums")]
-        public ActionResult<List<int>> GetNums()
-        {
-            Stack<int> nums = new Stack<int>();
-
-            for(int i=0; i <10;i++)
-            {
-                nums.Push(i);
-            }
-
-            List<int> reverseorderednums = new List<int>();
-
-            int length = nums.Count();
-            for(int i=0; i<length;i++)
-            {
-                reverseorderednums.Add(nums.Pop());
-            }
-
-            return  reverseorderednums;
-        }
+        
     }
 }
