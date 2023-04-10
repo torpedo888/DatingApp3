@@ -25,7 +25,7 @@ namespace API.Data
 
         public async Task<MemberDto> GetMemberAsync(string username)
         {
-             return await _context.Users.Where(x=>x.UserName == username)
+             return await _context.Users.Where(x=>x.UserName.ToLower() == username.ToLower())
                             .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                             .SingleOrDefaultAsync();
             
@@ -44,7 +44,9 @@ namespace API.Data
 
         public async Task<AppUser> GetUserByUsernameAsync(string username)
         {
-            return await _context.Users.SingleOrDefaultAsync(x=>x.UserName.ToLower() == username.ToLower());
+            return await _context.Users
+                        .Include(p=>p.Photos)
+                        .SingleOrDefaultAsync(x=>x.UserName.ToLower() == username.ToLower());
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
