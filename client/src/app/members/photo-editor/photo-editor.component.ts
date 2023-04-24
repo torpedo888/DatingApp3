@@ -82,7 +82,7 @@ export class PhotoEditorComponent implements OnInit {
         const photo = JSON.parse(response);
         this.member?.photos.push(photo);
         if(photo.isMain && this.user && this.member){
-          this.user.photoUrl = photo.url; //left side big photo in your profile edit
+          this.user.photoUrl = photo.url; //nav bar user photo updating. it's an observable..
           this.member.photoUrl = photo.url;
           this.accountService.setCurrentUser(this.user);
         }
