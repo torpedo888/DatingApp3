@@ -30,6 +30,8 @@ namespace API.Extensions
 
             services.AddScoped<LogUserActivity>();
 
+            services.AddScoped<ILikesRepository, LikesRepository>();
+
             return services;
         }
     }
