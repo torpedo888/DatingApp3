@@ -10,6 +10,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
@@ -28,7 +29,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [AllowAnonymous]
+        //[Authorize(Roles = "Admin")]-  we use policy based authorization so comment out
         [HttpGet]
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams)
         {
@@ -48,6 +49,7 @@ namespace API.Controllers
             return Ok(users);
         }
 
+        //[Authorize(Roles = "Member")]- we use policy based authorization so comment out
         [HttpGet("{username}")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
