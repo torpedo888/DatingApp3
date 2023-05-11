@@ -34,6 +34,23 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false 
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context => 
+                        {
+                            //signalr on the client side will use the access_token
+                            var accessToken = context.Request.Query["access_token"];
+
+                            var path = context.HttpContext.Request.Path;
+                            if(!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                            {
+                                context.Token = accessToken;
+                            }
+
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             //add policies for authorization

@@ -26,7 +26,7 @@
           <div>
             <strong>Last active:</strong>
             <!-- add the Z letter so the date will be utc time in the browser too. it's a fix.-->
-            <p>{{ member.lastActive + 'Z' | timeago }}</p> 
+            <p>{{ member.lastActive | timeago }}</p> 
           </div>
           <div>
             <strong>Member since:</strong>
