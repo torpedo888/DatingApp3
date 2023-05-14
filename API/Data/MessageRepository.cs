@@ -86,9 +86,7 @@ namespace API.Data
             //mivel ez egy message thread, a user a sajat kuldott es a fogadott uzeneteket is latja egyben ezert
             //van a queryben az or || hogy mind a kettot kiszurjuk, ahol o a sender vagy o a recipient...
 
-            var messages = await _context.Messages
-             .Include(u=>u.Sender).ThenInclude(p=>p.Photos)
-             .Include(u => u.Recipient).ThenInclude(p=>p.Photos)
+            var query = _context.Messages
              .Where(
                 m=> m.RecipientUsername.ToLower() == currentUserName.ToLower()  && m.RecipientDeleted == false &&
                 m.SenderUsername.ToLower() == recipientUsername.ToLower()||
@@ -96,9 +94,9 @@ namespace API.Data
                 m.SenderUsername.ToLower() == currentUserName.ToLower()
              )
              .OrderBy(m => m.MessageSent)
-             .ToListAsync();
+             .AsQueryable();
 
-             var unreadMessages = messages.Where(m=>m.DateRead == null && 
+             var unreadMessages = query.Where(m=>m.DateRead == null && 
                     m.RecipientUsername.ToLower() == currentUserName.ToLower()).ToList();
 
              if(unreadMessages.Any())
@@ -110,11 +108,10 @@ namespace API.Data
                 {
                     message.DateRead = DateTime.UtcNow;
                 }
-
-                await _context.SaveChangesAsync();
              }
 
-             return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            // return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return await query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider).ToListAsync();
         }
 
         public void RemoveConnection(Connection connection)
@@ -122,9 +119,5 @@ namespace API.Data
             _context.Connections.Remove(connection);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
     }
 }
