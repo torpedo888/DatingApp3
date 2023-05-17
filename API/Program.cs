@@ -47,7 +47,7 @@ else
         var pgPort = pgHostPort.Split(":")[1];
 	    var updatedHost = pgHost.Replace("flycast", "internal");
 
-        connString = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+        connString = $"Server={updatedHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
 }
 builder.Services.AddDbContext<DataContext>(opt =>
 {
